@@ -1,0 +1,169 @@
+const express = require("express");
+const mysql = require("mysql2");
+const cors = require("cors");
+const path = require("path");
+
+const app = express();
+const PORT = 3000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Serve your frontend files
+app.use(express.static(__dirname));
+
+// ================================
+// MYSQL CONNECTION
+// ================================
+
+const db = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "Sulai@2006",
+    database: "phoenix_game_cafe"
+});
+
+db.connect((err) => {
+    if (err) {
+        console.error("❌ MySQL connection failed:");
+        console.error(err.message);
+        return;
+    }
+
+    console.log("✅ MySQL connected successfully!");
+});
+
+// ================================
+// HOME PAGE
+// ================================
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+});
+
+// ================================
+// BOOKING API
+// ================================
+
+app.post("/api/bookings", (req, res) => {
+
+    const {
+        name,
+        phone,
+        experience,
+        date,
+        time,
+        players,
+        duration,
+        notes
+    } = req.body;
+
+    // Check required fields
+    if (
+        !name ||
+        !phone ||
+        !experience ||
+        !date ||
+        !time ||
+        !players ||
+        !duration
+    ) {
+        return res.status(400).json({
+            success: false,
+            message: "Please fill all required fields."
+        });
+    }
+
+    const sql = `
+        INSERT INTO bookings
+        (
+            name,
+            phone,
+            experience,
+            booking_date,
+            booking_time,
+            players,
+            duration,
+            notes
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const values = [
+        name,
+        phone,
+        experience,
+        date,
+        time,
+        players,
+        duration,
+        notes || ""
+    ];
+
+    db.query(sql, values, (err, result) => {
+
+        if (err) {
+            console.error("❌ Database error:");
+            console.error(err);
+
+            return res.status(500).json({
+                success: false,
+                message: "Booking could not be saved."
+            });
+        }
+
+        console.log("✅ New booking saved. ID:", result.insertId);
+
+        res.status(201).json({
+            success: true,
+            message: "Booking request saved successfully!",
+            bookingId: result.insertId
+        });
+    });
+});
+
+// ================================
+// GET ALL BOOKINGS
+// ================================
+
+app.get("/api/bookings", (req, res) => {
+
+    const sql = `
+        SELECT *
+        FROM bookings
+        ORDER BY created_at DESC
+    `;
+
+    db.query(sql, (err, results) => {
+
+        if (err) {
+            console.error(err);
+
+            return res.status(500).json({
+                success: false,
+                message: "Could not get bookings."
+            });
+        }
+
+        res.json({
+            success: true,
+            bookings: results
+        });
+    });
+});
+
+// ================================
+// START SERVER
+// ================================
+
+app.listen(PORT, () => {
+    console.log("");
+    console.log("====================================");
+    console.log("🔥 PHOENIX GAME CAFE SERVER");
+    console.log("====================================");
+    console.log(`🌐 Website: http://localhost:${PORT}`);
+    console.log(`📋 Bookings API: http://localhost:${PORT}/api/bookings`);
+    console.log("====================================");
+});

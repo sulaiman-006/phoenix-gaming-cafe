@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#090912" />
+  <meta name="description" content="Phoenix Game Cafe — steering racing, PlayStation and VR gaming." />
+  <title>Phoenix Game Cafe | Play Beyond Limits</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="noise"></div>
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="Phoenix Game Cafe home">
+      <img src="./logo.png" alt="Phoenix Game Cafe" class="brand-logo">
+      <span>PHOENIX<span class="brand-sub"> GAME CAFE</span></span>
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    <nav id="navMenu">
+      <a href="#experiences">Experiences</a>
+      <a href="#arena">The Arena</a>
+      <a href="#booking">Book a Session</a>
+      <a class="nav-cta" href="#booking">LET'S PLAY <span>↗</span></a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-glow"></div>
+      <div class="hero-content">
+        <p class="eyebrow"><span class="pulse"></span> YOUR NEXT LEVEL STARTS HERE</p>
+        <h1>PLAY BEYOND<br><span class="gradient-text">LIMITS.</span></h1>
+        <p class="hero-copy">Race the impossible. Own the arena. Step into another world.<br class="desktop-only"> Your gaming escape is waiting at Phoenix Game Cafe.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#booking">BOOK YOUR SESSION <span>↗</span></a>
+          <a class="button button-ghost" href="#experiences">EXPLORE EXPERIENCES</a>
+        </div>
+        <div class="hero-stats">
+          <div><strong>03</strong><span>WAYS TO PLAY</span></div>
+          <i></i>
+          <div><strong>∞</strong><span>WAYS TO HAVE FUN</span></div>
+        </div>
+      </div>
+      <div class="hero-art" aria-label="Gaming controller illustration">
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <div class="hero-chip chip-top">PLAYER 01 <b>ONLINE</b></div>
+        <div class="controller">
+          <div class="controller-center"><span>✦</span></div>
+          <div class="dpad"><i></i><b></b></div>
+          <div class="buttons"><i>△</i><b>○</b><em>×</em><strong>□</strong></div>
+          <div class="stick stick-left"></div><div class="stick stick-right"></div>
+        </div>
+        <div class="hero-chip chip-bottom"><span class="tiny-flame">✦</span> READY. SET. PLAY.</div>
+        <div class="floating-square square-one"></div><div class="floating-square square-two"></div>
+      </div>
+      <div class="hero-bottomline"><span>SCROLL TO EXPLORE</span><span>EST. FOR PLAYERS <b>◆</b></span></div>
+    </section>
+
+    <section class="experiences section-wrap" id="experiences">
+      <div class="section-heading">
+        <div><p class="eyebrow">CHOOSE YOUR REALITY</p><h2>THREE WORLDS.<br><span class="gradient-text">ONE DESTINATION.</span></h2></div>
+        <p class="section-intro">Bring your crew, challenge your reflexes, and make every session a story worth telling.</p>
+      </div>
+      <div class="experience-grid">
+        <article class="experience-card racing">
+          <div class="card-number">01 / RACING</div>
+          <div class="card-icon">🏎️</div>
+          <div class="card-content"><p class="card-kicker">FEEL EVERY TURN</p><h3>STEERING<br>ZONE</h3><p>Grip the wheel, hit the apex, and chase that perfect lap.</p><a href="#booking" class="card-link" data-experience="Steering Racing">BOOK A RACE <span>↗</span></a></div>
+          <div class="card-visual racing-visual"><span>RACE</span></div>
+        </article>
+        <article class="experience-card playstation">
+          <div class="card-number">02 / CONSOLE</div>
+          <div class="card-icon">🎮</div>
+          <div class="card-content"><p class="card-kicker">SQUAD UP</p><h3>PLAYSTATION<br>ARENA</h3><p>Go head-to-head or team up for your next big win.</p><a href="#booking" class="card-link" data-experience="PlayStation">BOOK A SESSION <span>↗</span></a></div>
+          <div class="card-visual ps-visual"><span>PLAYER<br>SELECT</span></div>
+        </article>
+        <article class="experience-card vr">
+          <div class="card-number">03 / IMMERSION</div>
+          <div class="card-icon">🥽</div>
+          <div class="card-content"><p class="card-kicker">STEP INSIDE</p><h3>VR<br>DIMENSION</h3><p>Leave the ordinary behind and enter a whole new world.</p><a href="#booking" class="card-link" data-experience="VR">ENTER VR <span>↗</span></a></div>
+          <div class="card-visual vr-visual"><span>REALITY<br>SHIFT</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="arena section-wrap" id="arena">
+      <div class="arena-panel">
+        <div class="arena-copy">
+          <p class="eyebrow">MORE THAN A GAME</p>
+          <h2>MAKE IT A<br><span class="gradient-text">LEGENDARY</span><br>SESSION.</h2>
+          <p>Birthday battles, friendly rivalries, weekend plans — Phoenix is your spot to switch off the outside world and play together.</p>
+          <a class="button button-primary" href="#booking">PLAN YOUR VISIT <span>↗</span></a>
+        </div>
+        <div class="arena-side">
+          <div class="arena-ring"><span>PHOENIX</span><strong>GAME<br>ON</strong><small>LEVEL UP YOUR DAY</small></div>
+          <div class="mini-label"><span class="mini-dot"></span> YOUR NEXT MEMORY STARTS HERE</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="booking section-wrap" id="booking">
+      <div class="section-heading booking-heading">
+        <div><p class="eyebrow">LOCK IN YOUR PLAYTIME</p><h2>YOUR NEXT<br><span class="gradient-text">SESSION AWAITS.</span></h2></div>
+        <p class="section-intro">Send a booking request below. We’ll collect your details through our connected Google Form.</p>
+      </div>
+      <div class="booking-layout">
+        <div class="booking-info">
+          <div class="booking-step"><span>01</span><div><h3>Pick your experience</h3><p>Steering racing, PlayStation, or VR.</p></div></div>
+          <div class="booking-step"><span>02</span><div><h3>Tell us your plan</h3><p>Choose a preferred date, time and group size.</p></div></div>
+          <div class="booking-step"><span>03</span><div><h3>We’ll confirm with you</h3><p>Your request is not confirmed until the cafe contacts you.</p></div></div>
+          <div class="contact-note"><span>✦</span><p><strong>Have a question?</strong><br>Add your real phone number and location to this section before publishing.</p></div>
+        </div>
+        <form class="booking-form" id="bookingForm">
+          <div class="form-top"><span class="form-status"><i></i> BOOKING REQUEST</span><span class="form-index">PGC / 001</span></div>
+          <div class="field-row">
+            <label>YOUR NAME<input name="name" type="text" placeholder="Player name" required autocomplete="name"></label>
+            <label>PHONE NUMBER<input name="phone" type="tel" placeholder="+91 98765 43210" required autocomplete="tel" pattern="[0-9+() -]{8,18}"></label>
+          </div>
+          <label>CHOOSE YOUR GAME MODE
+            <select name="experience" id="experienceSelect" required>
+              <option value="" disabled selected>Select a game</option>
+              <option>Steering Racing</option><option>PlayStation</option><option>VR</option>
+            </select>
+          </label>
+          <div class="field-row">
+            <label>PREFERRED DATE<input name="date" type="date" required id="dateInput"></label>
+            <label>PREFERRED TIME
+              <select name="time" required><option value="" disabled selected>Select time</option><option>Morning</option><option>Afternoon</option><option>Evening</option><option>Flexible</option></select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label>PLAYERS
+              <select name="players" required><option value="1">1 player</option><option value="2">2 players</option><option value="3">3 players</option><option value="4">4 players</option></select>
+            </label>
+            <label>SESSION LENGTH
+              <select name="duration" required><option value="30 minutes">30 minutes</option><option value="1 hour">1 hour</option><option value="2 hours">2 hours</option><option value="Ask me">Not sure yet</option></select>
+            </label>
+          </div>
+          <label>ANY SPECIAL REQUEST? <span class="optional">(OPTIONAL)</span><textarea name="notes" rows="3" placeholder="Birthday plan, group booking, questions..."></textarea></label>
+          <label class="consent"><input type="checkbox" required><span>I agree that Phoenix Game Cafe may contact me about this booking request.</span></label>
+          <button class="button button-primary submit-button" type="submit">SEND BOOKING REQUEST <span>↗</span></button>
+          <p class="form-footnote" id="formMessage" aria-live="polite">Please connect your Google Form in <code>script.js</code> before accepting live bookings.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <a class="brand" href="#home"><img src="logo.png" alt="Phoenix Game Cafe" class="brand-logo"><span>PHOENIX<span class="brand-sub"> GAME CAFE</span></span></a>
+    <p>PLAY BOLD. PLAY TOGETHER.</p>
+    <span class="copyright">© <span id="year"></span> PHOENIX GAME CAFE</span>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
