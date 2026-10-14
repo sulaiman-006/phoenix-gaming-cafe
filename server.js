@@ -19,12 +19,13 @@ app.use(express.static(__dirname));
 // ================================
 
 const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "Sulai@2006",
-    database: "phoenix_game_cafe"
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT,
+    ssl: process.env.DB_SSL ? { rejectUnauthorized: false } : null
 });
-
 db.connect((err) => {
     if (err) {
         console.error("❌ MySQL connection failed:");
@@ -33,6 +34,30 @@ db.connect((err) => {
     }
 
     console.log("✅ MySQL connected successfully!");
+
+    // Automatic Table Creation Code
+    const createTableQuery = `
+        CREATE TABLE IF NOT EXISTS bookings (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            phone VARCHAR(50) NOT NULL,
+            experience VARCHAR(255) NOT NULL,
+            booking_date DATE NOT NULL,
+            booking_time VARCHAR(50) NOT NULL,
+            players VARCHAR(50) NOT NULL,
+            duration VARCHAR(50) NOT NULL,
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    `;
+
+    db.query(createTableQuery, (err, result) => {
+        if (err) {
+            console.log("❌ Table creation error:", err);
+        } else {
+            console.log("✅ Bookings table created / ready!");
+        }
+    });
 });
 
 // ================================
