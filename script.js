@@ -53,3 +53,20 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+async function resetDatabase() {
+    if (confirm("Are you sure you want to delete all bookings and reset ID to 1?")) {
+        try {
+            const res = await fetch('/api/reset-id');
+            const data = await res.json();
+            if (data.success) {
+                alert("Database reset successfully!");
+                fetchBookings();
+            } else {
+                alert("Failed to reset.");
+            }
+        } catch (err) {
+            console.log(err);
+            alert("Error resetting database.");
+        }
+    }
+}
