@@ -178,6 +178,23 @@ app.get("/api/bookings", (req, res) => {
         });
     });
 });
+// ================================
+// DELETE BOOKING API
+// ================================
+
+app.delete("/api/bookings/:id", (req, res) => {
+    const bookingId = req.params.id;
+    const sql = "DELETE FROM bookings WHERE id = ?";
+
+    db.query(sql, [bookingId], (err, result) => {
+        if (err) {
+            console.error("❌ Delete error:", err);
+            return res.status(500).json({ success: false, message: "Failed to delete booking." });
+        }
+
+        res.json({ success: true, message: "Booking deleted successfully!" });
+    });
+});
 
 // ================================
 // START SERVER
