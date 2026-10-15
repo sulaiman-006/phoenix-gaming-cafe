@@ -8,16 +8,23 @@ document.addEventListener("DOMContentLoaded", function () {
             const submitBtn = bookingForm.querySelector("button[type='submit']");
             if (submitBtn) submitBtn.disabled = true;
 
-            // Form Field Data Gathering
-            const formData = {
-                name: document.getElementById("name")?.value || "",
-                phone: document.getElementById("phone")?.value || "",
-                experience: document.getElementById("experience")?.value || "PlayStation",
-                date: document.getElementById("date")?.value || "",
-                time: document.getElementById("time")?.value || "",
-                players: document.getElementById("players")?.value || "1",
-                duration: document.getElementById("duration")?.value || "1 hour",
-                notes: document.getElementById("notes")?.value || ""
+            // Automatically read all input/select/textarea values from form
+            const formDataObj = new FormData(bookingForm);
+            const formData = {};
+            formDataObj.forEach((value, key) => {
+                formData[key] = value;
+            });
+
+            // Fallback mapping if field names differ slightly in HTML
+            const payload = {
+                name: formData.name || formData.YOUR_NAME || formData.fullname || "",
+                phone: formData.phone || formData.PHONE_NUMBER || formData.mobile || "",
+                experience: formData.experience || formData.game_mode || formData.mode || "PlayStation",
+                date: formData.date || formData.booking_date || "",
+                time: formData.time || formData.booking_time || "",
+                players: formData.players || "1",
+                duration: formData.duration || "1 hour",
+                notes: formData.notes || formData.special_request || ""
             };
 
             try {
@@ -26,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify(payload)
                 });
 
                 const result = await response.json();
