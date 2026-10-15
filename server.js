@@ -57,8 +57,8 @@ db.connect((err) => {
     } else {
         console.log("✅ Bookings table ready!");
         // Reset auto_increment to start fresh if table is empty or reset wanted
-        db.query("ALTER TABLE bookings AUTO_INCREMENT = 1;", (alterErr) => {
-            if (alterErr) console.error("❌ Error resetting auto increment:", alterErr);
+        db.query("TRUNCATE TABLE bookings;", (truncErr) => {
+            if (truncErr) console.error("❌ Error truncating table:", truncErr);
         });
     }
 });
