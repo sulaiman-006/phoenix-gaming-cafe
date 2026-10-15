@@ -198,7 +198,13 @@ app.delete("/api/bookings/:id", (req, res) => {
 // ================================
 // START SERVER
 // ================================
-
+// Temporary Reset Route
+app.get("/api/reset-id", (req, res) => {
+    db.query("TRUNCATE TABLE bookings;", (err) => {
+        if (err) return res.json({ success: false, error: err });
+        res.json({ success: true, message: "Table truncated and ID reset to 1!" });
+    });
+});
 app.listen(PORT, () => {
     console.log("");
     console.log("====================================");
