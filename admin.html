@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phoenix Gaming Cafe - Admin Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #38bdf8;
+            margin: 0;
+        }
+        .refresh-btn {
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .refresh-btn:hover {
+            background-color: #0369a1;
+        }
+        .table-container {
+            overflow-x: auto;
+            background-color: #1e293b;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        th, td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #334155;
+        }
+        th {
+            background-color: #0f172a;
+            color: #38bdf8;
+            font-weight: 600;
+        }
+        tr:hover {
+            background-color: #334155;
+        }
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🎮 Phoenix Gaming Cafe - Booking Dashboard</h1>
+        <button class="refresh-btn" onclick="fetchBookings()">🔄 Refresh Data</button>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Experience</th>
+                    <th>Date</th>
+                    <th>Time Slot</th>
+                    <th>Players</th>
+                    <th>Duration</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody id="booking-rows">
+                <tr>
+                    <td colspan="9" class="no-data">Loading bookings...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    async function fetchBookings() {
+        const tbody = document.getElementById('booking-rows');
+        tbody.innerHTML = '<tr><td colspan="9" class="no-data">Loading bookings...</td></tr>';
+
+        try {
+            const response = await fetch('/api/bookings');
+            const data = await response.json();
+
+            if (data.success && data.bookings.length > 0) {
+                tbody.innerHTML = '';
+                data.bookings.forEach(b => {
+                    const formattedDate = new Date(b.booking_date).toLocaleDateString();
+                    const row = `
+                        <tr>
+                            <td>${b.id}</td>
+                            <td><strong>${b.name}</strong></td>
+                            <td>${b.phone}</td>
+                            <td>${b.experience}</td>
+                            <td>${formattedDate}</td>
+                            <td>${b.booking_time}</td>
+                            <td>${b.players}</td>
+                            <td>${b.duration}</td>
+                            <td>${b.notes || '-'}</td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="9" class="no-data">No bookings found yet.</td></tr>';
+            }
+        } catch (error) {
+            console.error(error);
+            tbody.innerHTML = '<tr><td colspan="9" class="no-data">Failed to load bookings.</td></tr>';
+        }
+    }
+
+    // Load automatically on page open
+    fetchBookings();
+</script>
+
+</body>
+</html>
