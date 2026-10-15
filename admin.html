@@ -16,7 +16,7 @@
             margin: 0;
         }
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         .header {
@@ -66,6 +66,19 @@
         tr:hover {
             background-color: #334155;
         }
+        .delete-btn {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .delete-btn:hover {
+            background-color: #dc2626;
+        }
         .no-data {
             text-align: center;
             padding: 20px;
@@ -94,11 +107,12 @@
                     <th>Players</th>
                     <th>Duration</th>
                     <th>Notes</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody id="booking-rows">
                 <tr>
-                    <td colspan="9" class="no-data">Loading bookings...</td>
+                    <td colspan="10" class="no-data">Loading bookings...</td>
                 </tr>
             </tbody>
         </table>
@@ -108,7 +122,7 @@
 <script>
     async function fetchBookings() {
         const tbody = document.getElementById('booking-rows');
-        tbody.innerHTML = '<tr><td colspan="9" class="no-data">Loading bookings...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="10" class="no-data">Loading bookings...</td></tr>';
 
         try {
             const response = await fetch('/api/bookings');
@@ -129,20 +143,41 @@
                             <td>${b.players}</td>
                             <td>${b.duration}</td>
                             <td>${b.notes || '-'}</td>
+                            <td>
+                                <button class="delete-btn" onclick="deleteBooking(${b.id})">🗑️ Delete</button>
+                            </td>
                         </tr>
                     `;
                     tbody.innerHTML += row;
                 });
             } else {
-                tbody.innerHTML = '<tr><td colspan="9" class="no-data">No bookings found yet.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="10" class="no-data">No bookings found yet.</td></tr>';
             }
         } catch (error) {
             console.error(error);
-            tbody.innerHTML = '<tr><td colspan="9" class="no-data">Failed to load bookings.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="10" class="no-data">Failed to load bookings.</td></tr>';
         }
     }
 
-    // Load automatically on page open
+    async function deleteBooking(id) {
+        if (confirm("Are you sure you want to delete booking ID #" + id + "?")) {
+            try {
+                const response = await fetch('/api/bookings/' + id, { method: 'DELETE' });
+                const data = await response.json();
+                if (data.success) {
+                    alert("Booking deleted!");
+                    fetchBookings();
+                } else {
+                    alert("Error deleting booking!");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Failed to delete!");
+            }
+        }
+    }
+
+    // Load automatically
     fetchBookings();
 </script>
 
