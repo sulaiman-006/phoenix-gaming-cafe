@@ -36,30 +36,26 @@ db.connect((err) => {
     console.log("✅ MySQL connected successfully!");
 
     // Automatic Table Creation Code
-    const createTableQuery = `
-        CREATE TABLE IF NOT EXISTS bookings (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(255) NOT NULL,
-            phone VARCHAR(50) NOT NULL,
-            experience VARCHAR(255) NOT NULL,
-            booking_date DATE NOT NULL,
-            booking_time VARCHAR(50) NOT NULL,
-            players VARCHAR(50) NOT NULL,
-            duration VARCHAR(50) NOT NULL,
-            notes TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-    `;
+const createTableQuery = `
+    CREATE TABLE IF NOT EXISTS bookings (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        phone VARCHAR(50) NOT NULL,
+        experience VARCHAR(255) NOT NULL,
+        booking_date DATE NOT NULL,
+        booking_time VARCHAR(50) NOT NULL,
+        players VARCHAR(50) NOT NULL,
+        duration VARCHAR(50) NOT NULL,
+        notes TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+`;
 
-    db.query(createTableQuery, (err, result) => {
+db.query(createTableQuery, (err, result) => {
     if (err) {
         console.error("❌ Error creating table:", err);
     } else {
         console.log("✅ Bookings table ready!");
-        // Reset auto_increment to start fresh if table is empty or reset wanted
-        db.query("TRUNCATE TABLE bookings;", (truncErr) => {
-            if (truncErr) console.error("❌ Error truncating table:", truncErr);
-        });
     }
 });
 
