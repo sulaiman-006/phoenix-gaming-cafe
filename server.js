@@ -154,10 +154,11 @@ app.post("/api/bookings", (req, res) => {
 
 app.get("/api/bookings", (req, res) => {
 
+    // 👉 Inga "created_at DESC" irukuradha "id ASC" nu maathiruppom
     const sql = `
         SELECT *
         FROM bookings
-        ORDER BY created_at DESC
+        ORDER BY id ASC
     `;
 
     db.query(sql, (err, results) => {
@@ -177,6 +178,7 @@ app.get("/api/bookings", (req, res) => {
         });
     });
 });
+
 // ================================
 // DELETE BOOKING API
 // ================================
