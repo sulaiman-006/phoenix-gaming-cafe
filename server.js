@@ -26,6 +26,7 @@ const db = mysql.createConnection({
     port: process.env.DB_PORT,
     ssl: process.env.DB_SSL ? { rejectUnauthorized: false } : null
 });
+
 db.connect((err) => {
     if (err) {
         console.error("❌ MySQL connection failed:");
@@ -36,27 +37,28 @@ db.connect((err) => {
     console.log("✅ MySQL connected successfully!");
 
     // Automatic Table Creation Code
-const createTableQuery = `
-    CREATE TABLE IF NOT EXISTS bookings (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        phone VARCHAR(50) NOT NULL,
-        experience VARCHAR(255) NOT NULL,
-        booking_date DATE NOT NULL,
-        booking_time VARCHAR(50) NOT NULL,
-        players VARCHAR(50) NOT NULL,
-        duration VARCHAR(50) NOT NULL,
-        notes TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-`;
+    const createTableQuery = `
+        CREATE TABLE IF NOT EXISTS bookings (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            phone VARCHAR(50) NOT NULL,
+            experience VARCHAR(255) NOT NULL,
+            booking_date DATE NOT NULL,
+            booking_time VARCHAR(50) NOT NULL,
+            players VARCHAR(50) NOT NULL,
+            duration VARCHAR(50) NOT NULL,
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    `;
 
-db.query(createTableQuery, (err, result) => {
-    if (err) {
-        console.error("❌ Error creating table:", err);
-    } else {
-        console.log("✅ Bookings table ready!");
-    }
+    db.query(createTableQuery, (err, result) => {
+        if (err) {
+            console.error("❌ Error creating table:", err);
+        } else {
+            console.log("✅ Bookings table ready!");
+        }
+    });
 });
 
 // ================================
@@ -72,7 +74,6 @@ app.get("/", (req, res) => {
 // ================================
 
 app.post("/api/bookings", (req, res) => {
-
     const {
         name,
         phone,
@@ -84,16 +85,7 @@ app.post("/api/bookings", (req, res) => {
         notes
     } = req.body;
 
-    // Check required fields
-    if (
-        !name ||
-        !phone ||
-        !experience ||
-        !date ||
-        !time ||
-        !players ||
-        !duration
-    ) {
+    if (!name || !phone || !experience || !date || !time || !players || !duration) {
         return res.status(400).json({
             success: false,
             message: "Please fill all required fields."
@@ -102,16 +94,7 @@ app.post("/api/bookings", (req, res) => {
 
     const sql = `
         INSERT INTO bookings
-        (
-            name,
-            phone,
-            experience,
-            booking_date,
-            booking_time,
-            players,
-            duration,
-            notes
-        )
+        (name, phone, experience, booking_date, booking_time, players, duration, notes)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
@@ -127,11 +110,8 @@ app.post("/api/bookings", (req, res) => {
     ];
 
     db.query(sql, values, (err, result) => {
-
         if (err) {
-            console.error("❌ Database error:");
-            console.error(err);
-
+            console.error("❌ Database error:", err);
             return res.status(500).json({
                 success: false,
                 message: "Booking could not be saved."
@@ -149,12 +129,10 @@ app.post("/api/bookings", (req, res) => {
 });
 
 // ================================
-// GET ALL BOOKINGS
+// GET ALL BOOKINGS (Sorted ID ASC)
 // ================================
 
 app.get("/api/bookings", (req, res) => {
-
-    // 👉 Inga "created_at DESC" irukuradha "id ASC" nu maathiruppom
     const sql = `
         SELECT *
         FROM bookings
@@ -162,10 +140,8 @@ app.get("/api/bookings", (req, res) => {
     `;
 
     db.query(sql, (err, results) => {
-
         if (err) {
             console.error(err);
-
             return res.status(500).json({
                 success: false,
                 message: "Could not get bookings."
@@ -199,6 +175,7 @@ app.delete("/api/bookings/:id", (req, res) => {
 
 // ================================
 // START SERVER
+// ================================
 
 app.listen(PORT, () => {
     console.log("");
