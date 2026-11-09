@@ -198,23 +198,6 @@ app.delete("/api/bookings/:id", (req, res) => {
 // ================================
 // START SERVER
 // ================================
-// Temporary Reset Route
-app.get("/api/reset-id", (req, res) => {
-    db.query("TRUNCATE TABLE bookings;", (err) => {
-        if (err) return res.json({ success: false, error: err });
-        res.json({ success: true, message: "Table truncated and ID reset to 1!" });
-    });
-});
-    // Database Reset Endpoint
-app.get("/api/bookings/reset/now", (req, res) => {
-    db.query("TRUNCATE TABLE bookings;", (err) => {
-        if (err) {
-            console.error("❌ Error truncating table:", err);
-            return res.json({ success: false, error: err });
-        }
-        res.json({ success: true, message: "Table reset successfully!" });
-    });
-});
 // Safe Database Reset Route (Only runs when requested)
 app.get("/api/bookings/reset/now", (req, res) => {
     db.query("TRUNCATE TABLE bookings;", (err) => {
