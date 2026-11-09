@@ -173,6 +173,16 @@ app.delete("/api/bookings/:id", (req, res) => {
     });
 });
 
+// Temporary Reset Route
+app.get("/api/reset-database-now", (req, res) => {
+    db.query("TRUNCATE TABLE bookings;", (err) => {
+        if (err) {
+            return res.status(500).json({ success: false, error: err.message });
+        }
+        res.json({ success: true, message: "Database truncated! IDs reset to 1." });
+    });
+});
+
 // ================================
 // START SERVER
 // ================================
