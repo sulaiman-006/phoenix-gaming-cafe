@@ -215,6 +215,17 @@ app.get("/api/bookings/reset/now", (req, res) => {
         res.json({ success: true, message: "Table reset successfully!" });
     });
 });
+// Safe Database Reset Route (Only runs when requested)
+app.get("/api/bookings/reset/now", (req, res) => {
+    db.query("TRUNCATE TABLE bookings;", (err) => {
+        if (err) {
+            console.error("❌ Error resetting table:", err);
+            return res.json({ success: false, error: err.message });
+        }
+        console.log("✅ Table truncated and ID reset to 1!");
+        res.json({ success: true, message: "Table reset successfully from ID 1!" });
+    });
+});
 app.listen(PORT, () => {
     console.log("");
     console.log("====================================");
