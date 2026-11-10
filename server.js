@@ -179,34 +179,33 @@ app.get("/api/bookings", (req, res) => {
     });
 });
 
-// ================================
-// DELETE BOOKING API
-// ================================
-
-app.delete("/api/bookings/:id", (req, res) => {
+// DELETE BOOKING & AUTOMATICALLY RE-ORDER IDs
+app.delete('/api/bookings/:id', (req, res) => {
     const bookingId = req.params.id;
-    const sql = "DELETE FROM bookings WHERE id = ?";
 
-    db.query(sql, [bookingId], (err, result) => {
+    // Step 1: Delete target record
+    const deleteSql = 'DELETE FROM bookings WHERE id = ?';
+    db.query(deleteSql, [bookingId], (err, result) => {
         if (err) {
-            console.error("❌ Delete error:", err);
-            return res.status(500).json({ success: false, message: "Failed to delete booking." });
+            console.error("Delete error:", err);
+            return res.status(500).json({ success: false, message: "Failed to delete booking" });
         }
 
-        res.json({ success: true, message: "Booking deleted successfully!" });
+        // Step 2: Re-sequence IDs starting from 1
+        const reorderSql = `
+            SET @count = 0;
+            UPDATE bookings SET id = (@count := @count + 1);
+            ALTER TABLE bookings AUTO_INCREMENT = 1;
+        `;
+
+        db.query(reorderSql, (reorderErr) => {
+            if (reorderErr) {
+                console.error("Reorder error:", reorderErr);
+            }
+            res.json({ success: true, message: "Booking deleted and IDs reordered successfully!" });
+        });
     });
 });
-
-// Temporary Reset Route
-app.get("/api/reset-database-now", (req, res) => {
-    db.query("TRUNCATE TABLE bookings;", (err) => {
-        if (err) {
-            return res.status(500).json({ success: false, error: err.message });
-        }
-        res.json({ success: true, message: "Database truncated! IDs reset to 1." });
-    });
-});
-
 // ================================
 // START SERVER
 // ================================
