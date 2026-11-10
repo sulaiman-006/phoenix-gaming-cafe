@@ -1,88 +1,84 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const bookingForm = document.getElementById("bookingForm") || document.querySelector("form");
-
-    if (bookingForm) {
-        bookingForm.addEventListener("submit", async function (e) {
-            e.preventDefault(); // Stop page reload
-
-            const submitBtn = bookingForm.querySelector("button[type='submit']");
-            if (submitBtn) submitBtn.disabled = true;
-
-            // Automatically read all input/select/textarea values from form
-            const formDataObj = new FormData(bookingForm);
-            const formData = {};
-            formDataObj.forEach((value, key) => {
-                formData[key] = value;
-            });
-
-            // Map form values to backend payload
-            const payload = {
-                name: formData.name || formData.YOUR_NAME || formData.fullname || "",
-                phone: formData.phone || formData.PHONE_NUMBER || formData.mobile || "",
-                experience: formData.experience || formData.game_mode || formData.mode || "PlayStation",
-                date: formData.date || formData.booking_date || "",
-                time: formData.time || formData.booking_time || "",
-                players: formData.players || "1",
-                duration: formData.duration || "1 hour",
-                notes: formData.notes || formData.special_request || ""
-            };
-
-            try {
-                const response = await fetch("/api/bookings", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    alert("🎉 Slot Booking Successful! ID: " + (result.bookingId || ""));
-                    bookingForm.reset(); // Clear form
-                    
-                    // If fetchBookings function exists (on admin page), refresh data immediately
-                    if (typeof fetchBookings === 'function') {
-                        fetchBookings();
-                    }
-                } else {
-                    alert("❌ Error: " + (result.message || "Failed to submit booking."));
-                }
-            } catch (error) {
-                console.error("Booking error:", error);
-                alert("❌ Something went wrong. Please try again!");
-            } finally {
-                if (submitBtn) submitBtn.disabled = false;
-            }
-        });
+<script>
+    async function loadAllData() {
+        await fetchBookings();
+        await fetchStats();
     }
 
-    // 👉 AUTO REFRESH (If page has admin stats or table, it will auto-update every 4 seconds)
-    if (typeof loadAllData === 'function') {
-        setInterval(() => {
-            loadAllData();
-        }, 4000); // 4000ms = 4 seconds
-    }
-});
-
-// Reset Database Function for Admin Dashboard
-async function resetDatabase() {
-    if (confirm("Are you sure you want to delete all bookings and reset ID to 1?")) {
+    async function fetchBookings() {
+        const tbody = document.getElementById('booking-rows');
+        
         try {
-            const res = await fetch('/api/reset-id');
-            const data = await res.json();
-            if (data.success) {
-                alert("Database reset successfully!");
-                if (typeof fetchBookings === 'function') {
-                    fetchBookings();
-                }
+            const response = await fetch('/api/bookings');
+            const data = await response.json();
+
+            if (data.success && data.bookings.length > 0) {
+                tbody.innerHTML = '';
+                data.bookings.forEach((b, index) => {
+                    const formattedDate = new Date(b.booking_date).toLocaleDateString();
+                    const row = `
+                        <tr>
+                            <td><strong>${index + 1}</strong></td>
+                            <td><strong>${b.name}</strong></td>
+                            <td>${b.phone}</td>
+                            <td>${b.experience}</td>
+                            <td>${formattedDate}</td>
+                            <td>${b.booking_time}</td>
+                            <td>${b.players}</td>
+                            <td>${b.duration}</td>
+                            <td>${b.notes || '-'}</td>
+                            <td>
+                                <button class="delete-btn" onclick="deleteBooking(${b.id})">🗑️ Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
             } else {
-                alert("Failed to reset.");
+                tbody.innerHTML = '<tr><td colspan="10" class="no-data">No bookings found yet.</td></tr>';
             }
-        } catch (err) {
-            console.log(err);
-            alert("Error resetting database.");
+        } catch (error) {
+            console.error("Error fetching bookings:", error);
         }
     }
-}
+
+    async function fetchStats() {
+        try {
+            const response = await fetch('/api/admin/stats');
+            const data = await response.json();
+
+            if (data.success && data.stats) {
+                document.getElementById('totalCustomers').innerText = data.stats.total_customers || 0;
+                document.getElementById('psCount').innerText = data.stats.ps_count || 0;
+                document.getElementById('steeringCount').innerText = data.stats.steering_count || 0;
+                document.getElementById('vrCount').innerText = data.stats.vr_count || 0;
+            }
+        } catch (err) {
+            console.error("Error loading stats:", err);
+        }
+    }
+
+    async function deleteBooking(id) {
+        if (confirm("Are you sure you want to delete this booking?")) {
+            try {
+                const response = await fetch('/api/bookings/' + id, { method: 'DELETE' });
+                const data = await response.json();
+                if (data.success) {
+                    loadAllData(); // Refresh immediately after delete
+                } else {
+                    alert("Error deleting booking!");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Failed to delete!");
+            }
+        }
+    }
+
+    // Load data automatically when page first opens
+    loadAllData();
+
+    // 🚀 AUTO REFRESH EVERY 4 SECONDS (Background polling without manual reload)
+    setInterval(() => {
+        loadAllData();
+    }, 4000);
+</script>
