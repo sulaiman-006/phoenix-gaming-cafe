@@ -127,7 +127,31 @@ app.post("/api/bookings", (req, res) => {
         });
     });
 });
+// ================================
+// ADMIN STATS API (Summary Counts)
+// ================================
+app.get("/api/admin/stats", (req, res) => {
+    const sql = `
+        SELECT 
+            COUNT(*) as total_customers,
+            SUM(CASE WHEN experience = 'PlayStation' THEN 1 ELSE 0 END) as ps_count,
+            SUM(CASE WHEN experience = 'Steering Racing' THEN 1 ELSE 0 END) as steering_count,
+            SUM(CASE WHEN experience = 'VR' THEN 1 ELSE 0 END) as vr_count
+        FROM bookings
+    `;
 
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error("Stats error:", err);
+            return res.status(500).json({ success: false, message: "Could not fetch stats" });
+        }
+
+        res.json({
+            success: true,
+            stats: results[0]
+        });
+    });
+});
 // ================================
 // GET ALL BOOKINGS (Sorted ID ASC)
 // ================================
