@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert("🎉 Slot Booking Successful! ID: " + (result.bookingId || ""));
                     bookingForm.reset(); // Clear form
                     
-                    // If fetchBookings function exists (on admin page), refresh data
+                    // If fetchBookings function exists (on admin page), refresh data immediately
                     if (typeof fetchBookings === 'function') {
                         fetchBookings();
                     }
@@ -56,6 +56,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (submitBtn) submitBtn.disabled = false;
             }
         });
+    }
+
+    // 👉 AUTO REFRESH (If page has admin stats or table, it will auto-update every 4 seconds)
+    if (typeof loadAllData === 'function') {
+        setInterval(() => {
+            loadAllData();
+        }, 4000); // 4000ms = 4 seconds
     }
 });
 
