@@ -26,10 +26,16 @@
             border-bottom: 2px solid #334155;
             padding-bottom: 15px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
         h1 {
             color: #38bdf8;
             margin: 0;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
         }
         .refresh-btn {
             background-color: #0284c7;
@@ -42,6 +48,35 @@
         }
         .refresh-btn:hover {
             background-color: #0369a1;
+        }
+        /* Summary Cards Styling */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .stat-card {
+            background-color: #1e293b;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            border-left: 4px solid #38bdf8;
+        }
+        .stat-card.ps { border-left-color: #a855f7; }
+        .stat-card.steering { border-left-color: #22c55e; }
+        .stat-card.vr { border-left-color: #f59e0b; }
+        .stat-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+        .stat-card p {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+            color: #f8fafc;
         }
         .table-container {
             overflow-x: auto;
@@ -91,15 +126,36 @@
 <div class="container">
     <div class="header">
         <h1>🎮 Phoenix Gaming Cafe - Booking Dashboard</h1>
-        <button class="refresh-btn" onclick="fetchBookings()">🔄 Refresh Data</button>
-        <button class="refresh-btn" style="background-color: #ef4444;" onclick="resetDatabase()">⚠️ Reset ID to 1</button>
+        <div class="btn-group">
+            <button class="refresh-btn" onclick="loadAllData()">🔄 Refresh Data</button>
+        </div>
+    </div>
+
+    <!-- Summary Stats Cards -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <h3>Total Customers</h3>
+            <p id="totalCustomers">0</p>
+        </div>
+        <div class="stat-card ps">
+            <h3>PlayStation</h3>
+            <p id="psCount">0</p>
+        </div>
+        <div class="stat-card steering">
+            <h3>Steering Racing</h3>
+            <p id="steeringCount">0</p>
+        </div>
+        <div class="stat-card vr">
+            <h3>VR Games</h3>
+            <p id="vrCount">0</p>
+        </div>
     </div>
 
     <div class="table-container">
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>S.No</th>
                     <th>Name</th>
                     <th>Phone</th>
                     <th>Experience</th>
@@ -121,6 +177,11 @@
 </div>
 
 <script>
+    async function loadAllData() {
+        await fetchBookings();
+        await fetchStats();
+    }
+
     async function fetchBookings() {
         const tbody = document.getElementById('booking-rows');
         tbody.innerHTML = '<tr><td colspan="10" class="no-data">Loading bookings...</td></tr>';
@@ -131,11 +192,11 @@
 
             if (data.success && data.bookings.length > 0) {
                 tbody.innerHTML = '';
-                data.bookings.forEach(b => {
+                data.bookings.forEach((b, index) => {
                     const formattedDate = new Date(b.booking_date).toLocaleDateString();
                     const row = `
                         <tr>
-                            <td>${b.id}</td>
+                            <td><strong>${index + 1}</strong></td>
                             <td><strong>${b.name}</strong></td>
                             <td>${b.phone}</td>
                             <td>${b.experience}</td>
@@ -160,14 +221,30 @@
         }
     }
 
+    async function fetchStats() {
+        try {
+            const response = await fetch('/api/admin/stats');
+            const data = await response.json();
+
+            if (data.success && data.stats) {
+                document.getElementById('totalCustomers').innerText = data.stats.total_customers || 0;
+                document.getElementById('psCount').innerText = data.stats.ps_count || 0;
+                document.getElementById('steeringCount').innerText = data.stats.steering_count || 0;
+                document.getElementById('vrCount').innerText = data.stats.vr_count || 0;
+            }
+        } catch (err) {
+            console.error("Error loading stats:", err);
+        }
+    }
+
     async function deleteBooking(id) {
-        if (confirm("Are you sure you want to delete booking ID #" + id + "?")) {
+        if (confirm("Are you sure you want to delete this booking?")) {
             try {
                 const response = await fetch('/api/bookings/' + id, { method: 'DELETE' });
                 const data = await response.json();
                 if (data.success) {
-                    alert("Booking deleted!");
-                    fetchBookings();
+                    alert("Booking deleted successfully!");
+                    loadAllData();
                 } else {
                     alert("Error deleting booking!");
                 }
@@ -178,8 +255,8 @@
         }
     }
 
-    // Load automatically
-    fetchBookings();
+    // Load data automatically when page opens
+    loadAllData();
 </script>
 
 </body>
