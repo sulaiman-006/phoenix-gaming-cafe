@@ -184,7 +184,20 @@
         await fetchStats();
     }
 
-    // Helper function to calculate End Time based on Start Time and Duration
+    // Helper function to convert 24-hour time to 12-hour AM/PM format
+    function formatToAMPM(timeStr) {
+        if (!timeStr || !timeStr.includes(':')) return timeStr || '-';
+        const [h, m] = timeStr.split(':').map(Number);
+        if (isNaN(h) || isNaN(m)) return timeStr;
+        
+        const period = h >= 12 ? 'PM' : 'AM';
+        let hour12 = h % 12;
+        hour12 = hour12 ? hour12 : 12;
+        const minuteStr = String(m).padStart(2, '0');
+        return `${hour12}:${minuteStr} ${period}`;
+    }
+
+    // Helper function to calculate End Time and return in AM/PM format
     function calculateEndTime(startTime, durationStr) {
         if (!startTime || !startTime.includes(':')) return '-';
         
@@ -196,7 +209,6 @@
         } else if (durationStr.includes('2 hours')) {
             addMins = 120;
         } else if (durationStr.includes('hour')) {
-            // handle generic hours if any
             const match = durationStr.match(/(\d+)/);
             if (match) addMins = parseInt(match[1]) * 60;
         } else if (durationStr.includes('minute')) {
@@ -205,9 +217,14 @@
         }
 
         const dateObj = new Date(0, 0, 0, hours, mins + addMins);
-        const endH = String(dateObj.getHours()).padStart(2, '0');
-        const endM = String(dateObj.getMinutes()).padStart(2, '0');
-        return `${endH}:${endM}`;
+        const endH = dateObj.getHours();
+        const endM = dateObj.getMinutes();
+        
+        const period = endH >= 12 ? 'PM' : 'AM';
+        let hour12 = endH % 12;
+        hour12 = hour12 ? hour12 : 12;
+        const minuteStr = String(endM).padStart(2, '0');
+        return `${hour12}:${minuteStr} ${period}`;
     }
 
     async function fetchBookings() {
@@ -228,8 +245,9 @@
                     const year = d.getFullYear();
                     const formattedDate = `${day}/${month}/${year}`;
 
-                    const startTime = b.booking_time || '-';
-                    const endTime = calculateEndTime(startTime, b.duration);
+                    // Convert Start Time & Calculate End Time in AM/PM format
+                    const startTime = formatToAMPM(b.booking_time);
+                    const endTime = calculateEndTime(b.booking_time, b.duration);
 
                     const row = `
                         <tr>
