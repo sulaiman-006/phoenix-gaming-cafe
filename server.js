@@ -92,42 +92,50 @@ app.post("/api/bookings", (req, res) => {
         });
     }
 
-    const sql = `
-        INSERT INTO bookings
-        (name, phone, experience, booking_date, booking_time, players, duration, notes)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+    // 🛑 STEP 1: Check if the slot is already booked for that date and time
+    const checkSql = "SELECT * FROM bookings WHERE booking_date = ? AND booking_time = ?";
+    db.query(checkSql, [date, time], (checkErr, checkResults) => {
+        if (checkErr) {
+            console.error("Slot check error:", checkErr);
+            return res.status(500).json({ success: false, message: "Database error during check." });
+        }
 
-    const values = [
-        name,
-        phone,
-        experience,
-        date,
-        time,
-        players,
-        duration,
-        notes || ""
-    ];
-
-    db.query(sql, values, (err, result) => {
-        if (err) {
-            console.error("❌ Database error:", err);
-            return res.status(500).json({
+        // If results found, slot is already taken!
+        if (checkResults.length > 0) {
+            return res.status(400).json({
                 success: false,
-                message: "Booking could not be saved."
+                message: "⚠️ This Date and Time slot is already booked by someone! Please choose another timing."
             });
         }
 
-        console.log("✅ New booking saved. ID:", result.insertId);
+        // STEP 2: If available, proceed with Insert
+        const sql = `
+            INSERT INTO bookings
+            (name, phone, experience, booking_date, booking_time, players, duration, notes)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `;
 
-        res.status(201).json({
-            success: true,
-            message: "Booking request saved successfully!",
-            bookingId: result.insertId
+        const values = [name, phone, experience, date, time, players, duration, notes || ""];
+
+        db.query(sql, values, (err, result) => {
+            if (err) {
+                console.error("❌ Database error:", err);
+                return res.status(500).json({
+                    success: false,
+                    message: "Booking could not be saved."
+                });
+            }
+
+            console.log("✅ New booking saved. ID:", result.insertId);
+
+            res.status(201).json({
+                success: true,
+                message: "Slot Booking Successful! ID: " + result.insertId,
+                bookingId: result.insertId
+            });
         });
     });
-});
-// ================================
+});// ================================
 // ADMIN STATS API (Summary Counts)
 // ================================
 app.get("/api/admin/stats", (req, res) => {
