@@ -130,6 +130,31 @@
               <select name="time" required><option value="" disabled selected>Select time</option><option>Morning</option><option>Afternoon</option><option>Evening</option></select>
             </label>
           </div>
+          <label for="time">Select Time Slot:</label>
+<select id="time" name="time" required class="form-control">
+    <option value="">-- Choose Time Slot --</option>
+    <!-- Morning Slots -->
+    <optgroup label="Morning">
+        <option value="09:00 AM - 10:00 AM">09:00 AM - 10:00 AM</option>
+        <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
+        <option value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</option>
+    </optgroup>
+    <!-- Afternoon Slots -->
+    <optgroup label="Afternoon">
+        <option value="12:00 PM - 01:00 PM">12:00 PM - 01:00 PM</option>
+        <option value="02:00 PM - 03:00 PM">02:00 PM - 03:00 PM</option>
+        <option value="03:00 PM - 04:00 PM">03:00 PM - 04:00 PM</option>
+    </optgroup>
+    <!-- Evening Slots -->
+    <optgroup label="Evening">
+        <option value="04:00 PM - 05:00 PM">04:00 PM - 05:00 PM</option>
+        <option value="05:00 PM - 06:00 PM">05:00 PM - 06:00 PM</option>
+        <option value="06:00 PM - 07:00 PM">06:00 PM - 07:00 PM</option>
+        <option value="07:00 PM - 08:00 PM">07:00 PM - 08:00 PM</option>
+        <option value="08:00 PM - 09:00 PM">08:00 PM - 09:00 PM</option>
+        <option value="09:00 PM - 10:00 PM">09:00 PM - 10:00 PM</option>
+    </optgroup>
+</select>
           <div class="field-row">
             <label>PLAYERS
               <select name="players" required><option value="1">1 player</option><option value="2">2 players</option><option value="3">3 players</option><option value="4">4 players</option></select>
