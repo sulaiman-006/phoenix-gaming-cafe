@@ -82,9 +82,9 @@ document.getElementById('bookingForm').addEventListener('submit', async function
         phone: document.getElementById('phone').value,
         experience: document.getElementById('experience').value,
         date: document.getElementById('date').value,
-        time: document.getElementById('time').value,
+        time: document.getElementById('time').value, // Time picker value (e.g., "14:30")
         players: document.getElementById('players').value,
-        duration: document.getElementById('duration').value,
+        duration: document.getElementById('duration').value, // Duration dropdown value
         notes: document.getElementById('notes').value
     };
 
@@ -99,18 +99,18 @@ document.getElementById('bookingForm').addEventListener('submit', async function
 
         if (data.success) {
             alert("🎉 " + data.message);
-            // Form clear pannalam or redirect pannalam
             document.getElementById('bookingForm').reset();
         } else {
-            // 🛑 POPUP ALERT WHEN SLOT IS ALREADY BOOKED!
-            alert(data.message); 
+            // 🛑 POPUP ALERT IF ALREADY BOOKED
+            alert(data.message);
         }
     } catch (error) {
         console.error("Error:", error);
         alert("Something went wrong! Please try again.");
     }
 });
-    // Load data automatically when page first opens
+
+// Load data automatically when page first opens
     loadAllData();
 
     // 🚀 AUTO REFRESH EVERY 4 SECONDS (Background polling without manual reload)
