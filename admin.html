@@ -88,6 +88,7 @@
             width: 100%;
             border-collapse: collapse;
             text-align: left;
+            white-space: nowrap;
         }
         th, td {
             padding: 14px 16px;
@@ -153,24 +154,24 @@
 
     <div class="table-container">
         <table>
- <thead>
-    <tr>
-        <th>S.No</th>
-        <th>Name</th>
-        <th>Phone</th>
-        <th>Experience</th>
-        <th>Date</th>
-        <th>Start Time</th>
-        <th>End Time</th>   
-        <th>Players</th>
-        <th>Duration</th>
-        <th>Notes</th>
-        <th>Action</th>
-    </tr>
- </thead>
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Experience</th>
+                    <th>Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>   
+                    <th>Players</th>
+                    <th>Duration</th>
+                    <th>Notes</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
             <tbody id="booking-rows">
                 <tr>
-                    <td colspan="10" class="no-data">Loading bookings...</td>
+                    <td colspan="11" class="no-data">Loading bookings...</td>
                 </tr>
             </tbody>
         </table>
@@ -183,9 +184,35 @@
         await fetchStats();
     }
 
+    // Helper function to calculate End Time based on Start Time and Duration
+    function calculateEndTime(startTime, durationStr) {
+        if (!startTime || !startTime.includes(':')) return '-';
+        
+        const [hours, mins] = startTime.split(':').map(Number);
+        let addMins = 30; // default
+
+        if (durationStr.includes('1 hour')) {
+            addMins = 60;
+        } else if (durationStr.includes('2 hours')) {
+            addMins = 120;
+        } else if (durationStr.includes('hour')) {
+            // handle generic hours if any
+            const match = durationStr.match(/(\d+)/);
+            if (match) addMins = parseInt(match[1]) * 60;
+        } else if (durationStr.includes('minute')) {
+            const match = durationStr.match(/(\d+)/);
+            if (match) addMins = parseInt(match[1]);
+        }
+
+        const dateObj = new Date(0, 0, 0, hours, mins + addMins);
+        const endH = String(dateObj.getHours()).padStart(2, '0');
+        const endM = String(dateObj.getMinutes()).padStart(2, '0');
+        return `${endH}:${endM}`;
+    }
+
     async function fetchBookings() {
         const tbody = document.getElementById('booking-rows');
-        tbody.innerHTML = '<tr><td colspan="10" class="no-data">Loading bookings...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="11" class="no-data">Loading bookings...</td></tr>';
 
         try {
             const response = await fetch('/api/bookings');
@@ -194,7 +221,16 @@
             if (data.success && data.bookings.length > 0) {
                 tbody.innerHTML = '';
                 data.bookings.forEach((b, index) => {
-                    const formattedDate = new Date(b.booking_date).toLocaleDateString();
+                    // 📅 Date Format Convert to DD/MM/YYYY
+                    const d = new Date(b.booking_date);
+                    const day = String(d.getDate()).padStart(2, '0');
+                    const month = String(d.getMonth() + 1).padStart(2, '0');
+                    const year = d.getFullYear();
+                    const formattedDate = `${day}/${month}/${year}`;
+
+                    const startTime = b.booking_time || '-';
+                    const endTime = calculateEndTime(startTime, b.duration);
+
                     const row = `
                         <tr>
                             <td><strong>${index + 1}</strong></td>
@@ -202,7 +238,8 @@
                             <td>${b.phone}</td>
                             <td>${b.experience}</td>
                             <td>${formattedDate}</td>
-                            <td>${b.booking_time}</td>
+                            <td>${startTime}</td>
+                            <td>${endTime}</td>
                             <td>${b.players}</td>
                             <td>${b.duration}</td>
                             <td>${b.notes || '-'}</td>
@@ -214,11 +251,11 @@
                     tbody.innerHTML += row;
                 });
             } else {
-                tbody.innerHTML = '<tr><td colspan="10" class="no-data">No bookings found yet.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="11" class="no-data">No bookings found yet.</td></tr>';
             }
         } catch (error) {
             console.error(error);
-            tbody.innerHTML = '<tr><td colspan="10" class="no-data">Failed to load bookings.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="11" class="no-data">Failed to load bookings.</td></tr>';
         }
     }
 
