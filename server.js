@@ -70,7 +70,7 @@ app.get("/", (req, res) => {
 });
 
 // ================================
-// BOOKING API
+// BOOKING API (WITH SLOT CLASH CHECK)
 // ================================
 
 app.post("/api/bookings", (req, res) => {
@@ -80,7 +80,7 @@ app.post("/api/bookings", (req, res) => {
         return res.status(400).json({ success: false, message: "Please fill all required fields." });
     }
 
-    // 🛑 Check if the exact Date and Time slot is already booked
+    // 🛑 Check if the exact Date and Start Time slot is already booked
     const checkSql = "SELECT * FROM bookings WHERE booking_date = ? AND booking_time = ?";
     db.query(checkSql, [date, time], (checkErr, checkResults) => {
         if (checkErr) {
@@ -92,7 +92,7 @@ app.post("/api/bookings", (req, res) => {
         if (checkResults.length > 0) {
             return res.status(400).json({
                 success: false,
-                message: `⚠️ Sorry! The time slot (${time}) on this date is already booked by someone. Please choose another time!`
+                message: `⚠️ Sorry! The time slot starting at (${time}) on this date is already booked by someone. Please choose another time!`
             });
         }
 
@@ -119,6 +119,7 @@ app.post("/api/bookings", (req, res) => {
         });
     });
 });
+
 // ================================
 // ADMIN STATS API (Summary Counts)
 // ================================
@@ -144,6 +145,7 @@ app.get("/api/admin/stats", (req, res) => {
         });
     });
 });
+
 // ================================
 // GET ALL BOOKINGS (Sorted ID ASC)
 // ================================
@@ -175,7 +177,6 @@ app.get("/api/bookings", (req, res) => {
 app.delete('/api/bookings/:id', (req, res) => {
     const bookingId = req.params.id;
 
-    // Step 1: Delete target record
     const deleteSql = 'DELETE FROM bookings WHERE id = ?';
     db.query(deleteSql, [bookingId], (err, result) => {
         if (err) {
@@ -183,7 +184,6 @@ app.delete('/api/bookings/:id', (req, res) => {
             return res.status(500).json({ success: false, message: "Failed to delete booking" });
         }
 
-        // Step 2: Re-sequence IDs starting from 1
         const reorderSql = `
             SET @count = 0;
             UPDATE bookings SET id = (@count := @count + 1);
@@ -198,8 +198,9 @@ app.delete('/api/bookings/:id', (req, res) => {
         });
     });
 });
+
 // ================================
-// START SERVER
+-- START SERVER
 // ================================
 
 app.listen(PORT, () => {
