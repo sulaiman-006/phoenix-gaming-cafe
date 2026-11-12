@@ -80,7 +80,7 @@ app.post("/api/bookings", (req, res) => {
         return res.status(400).json({ success: false, message: "Please fill all required fields." });
     }
 
-    // 🛑 Check if the exact Date and Start Time slot is already booked
+    // Check if the exact Date and Start Time slot is already booked
     const checkSql = "SELECT * FROM bookings WHERE booking_date = ? AND booking_time = ?";
     db.query(checkSql, [date, time], (checkErr, checkResults) => {
         if (checkErr) {
@@ -200,7 +200,7 @@ app.delete('/api/bookings/:id', (req, res) => {
 });
 
 // ================================
--- START SERVER
+// START SERVER
 // ================================
 
 app.listen(PORT, () => {
