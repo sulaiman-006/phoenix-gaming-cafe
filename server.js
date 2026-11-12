@@ -70,7 +70,7 @@ app.get("/", (req, res) => {
 });
 
 // ================================
-// BOOKING API (WITH SLOT CLASH CHECK)
+// BOOKING API (WITH GAME MODE & TIME OVERLAP CHECK)
 // ================================
 
 app.post("/api/bookings", (req, res) => {
@@ -80,23 +80,66 @@ app.post("/api/bookings", (req, res) => {
         return res.status(400).json({ success: false, message: "Please fill all required fields." });
     }
 
-    // Check if the exact Date and Start Time slot is already booked
-    const checkSql = "SELECT * FROM bookings WHERE booking_date = ? AND booking_time = ?";
-    db.query(checkSql, [date, time], (checkErr, checkResults) => {
+    // Helper to convert time "HH:MM" to total minutes from midnight for overlap checking
+    function timeToMins(tStr) {
+        if (!tStr || !tStr.includes(':')) return 0;
+        const [h, m] = tStr.split(':').map(Number);
+        return h * 60 + m;
+    }
+
+    // Helper to get duration in minutes
+    function getDurationMins(durStr) {
+        if (durStr.includes('1 hour')) return 60;
+        if (durStr.includes('2 hours')) return 120;
+        if (durStr.includes('hour')) {
+            const match = durStr.match(/(\d+)/);
+            return match ? parseInt(match[1]) * 60 : 60;
+        }
+        if (durStr.includes('minute')) {
+            const match = durStr.match(/(\d+)/);
+            return match ? parseInt(match[1]) : 30;
+        }
+        return 30;
+    }
+
+    const newStartMins = timeToMins(time);
+    const newDurMins = getDurationMins(duration);
+    const newEndMins = newStartMins + newDurMins;
+
+    // Step 1: Fetch all bookings for the same Date and same Game Mode (Experience)
+    const checkSql = "SELECT * FROM bookings WHERE booking_date = ? AND experience = ?";
+    db.query(checkSql, [date, experience], (checkErr, existingBookings) => {
         if (checkErr) {
             console.error("Slot check error:", checkErr);
             return res.status(500).json({ success: false, message: "Database error during check." });
         }
 
-        // If already booked, send popup alert message
-        if (checkResults.length > 0) {
+        // Step 2: Check for time overlaps
+        let isClash = false;
+        let conflictingUser = "";
+
+        for (let b of existingBookings) {
+            const existingStartMins = timeToMins(b.booking_time);
+            const existingDurMins = getDurationMins(b.duration);
+            const existingEndMins = existingStartMins + existingDurMins;
+
+            // Overlap Condition: (NewStart < ExistingEnd) AND (NewEnd > ExistingStart)
+            if (newStartMins < existingEndMins && newEndMins > existingStartMins) {
+                isClash = true;
+                conflictingUser = b.name;
+                break;
+            }
+        }
+
+        // If a clash is found for this specific game mode, block it!
+        if (isClash) {
             return res.status(400).json({
                 success: false,
-                message: `⚠️ Sorry! The time slot starting at (${time}) on this date is already booked by someone. Please choose another time!`
+                message: `⚠️ Sorry! The ${experience} station is already booked during this time slot (Clash with existing booking). Please choose another time or game mode!`
             });
         }
 
-        // Proceed to Insert if slot is free
+        // Step 3: If no clash, proceed to Insert
         const sql = `
             INSERT INTO bookings
             (name, phone, experience, booking_date, booking_time, players, duration, notes)
@@ -119,7 +162,6 @@ app.post("/api/bookings", (req, res) => {
         });
     });
 });
-
 // ================================
 // ADMIN STATS API (Summary Counts)
 // ================================
