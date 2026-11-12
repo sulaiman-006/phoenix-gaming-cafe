@@ -118,7 +118,7 @@ async function loadAllData() {
         endTimeInput.addEventListener('change', calculateDuration);
     }
 
-    // FORM SUBMISSION HANDLING
+   // FORM SUBMISSION HANDLING
     const bookingForm = document.getElementById('bookingForm');
     if (bookingForm) {
         bookingForm.addEventListener('submit', async function(e) {
@@ -129,9 +129,10 @@ async function loadAllData() {
                 phone: document.getElementById('phone').value,
                 experience: document.getElementById('experience').value,
                 date: document.getElementById('date').value,
-                time: document.getElementById('startTime').value, // Start time stored as booking time
+                startTime: document.getElementById('startTime').value, // Start Time
+                endTime: document.getElementById('endTime').value,     // End Time
                 players: document.getElementById('players').value,
-                duration: document.getElementById('duration').value, // Auto-calculated duration
+                duration: document.getElementById('duration').value,
                 notes: document.getElementById('notes').value
             };
 
@@ -148,7 +149,6 @@ async function loadAllData() {
                     alert("🎉 " + data.message);
                     bookingForm.reset();
                 } else {
-                    // 🛑 POPUP ALERT IF SLOT ALREADY BOOKED
                     alert(data.message);
                 }
             } catch (error) {
