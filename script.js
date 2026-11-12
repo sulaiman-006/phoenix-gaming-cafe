@@ -74,6 +74,42 @@
         }
     }
 
+document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formData = {
+        name: document.getElementById('name').value,
+        phone: document.getElementById('phone').value,
+        experience: document.getElementById('experience').value,
+        date: document.getElementById('date').value,
+        time: document.getElementById('time').value,
+        players: document.getElementById('players').value,
+        duration: document.getElementById('duration').value,
+        notes: document.getElementById('notes').value
+    };
+
+    try {
+        const response = await fetch('/api/bookings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert("🎉 " + data.message);
+            // Form clear pannalam or redirect pannalam
+            document.getElementById('bookingForm').reset();
+        } else {
+            // 🛑 POPUP ALERT WHEN SLOT IS ALREADY BOOKED!
+            alert(data.message); 
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Something went wrong! Please try again.");
+    }
+});
     // Load data automatically when page first opens
     loadAllData();
 
