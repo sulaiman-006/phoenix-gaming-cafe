@@ -184,24 +184,29 @@
         await fetchStats();
     }
 
-    // Helper function to convert 24-hour time to 12-hour AM/PM format
+    // 🕒 Helper function to convert 24-hour time to 12-hour AM/PM format
     function formatToAMPM(timeStr) {
         if (!timeStr || !timeStr.includes(':')) return timeStr || '-';
-        const [h, m] = timeStr.split(':').map(Number);
+        const parts = timeStr.split(':');
+        let h = parseInt(parts[0], 10);
+        let m = parseInt(parts[1], 10);
+        
         if (isNaN(h) || isNaN(m)) return timeStr;
         
         const period = h >= 12 ? 'PM' : 'AM';
         let hour12 = h % 12;
-        hour12 = hour12 ? hour12 : 12;
+        hour12 = hour12 ? hour12 : 12; // 0 should be 12
         const minuteStr = String(m).padStart(2, '0');
         return `${hour12}:${minuteStr} ${period}`;
     }
 
-    // Helper function to calculate End Time and return in AM/PM format
+    // 🕒 Helper function to calculate End Time in AM/PM format
     function calculateEndTime(startTime, durationStr) {
         if (!startTime || !startTime.includes(':')) return '-';
         
-        const [hours, mins] = startTime.split(':').map(Number);
+        const parts = startTime.split(':');
+        const hours = parseInt(parts[0], 10);
+        const mins = parseInt(parts[1], 10);
         let addMins = 30; // default
 
         if (durationStr.includes('1 hour')) {
@@ -245,7 +250,7 @@
                     const year = d.getFullYear();
                     const formattedDate = `${day}/${month}/${year}`;
 
-                    // Convert Start Time & Calculate End Time in AM/PM format
+                    // ✅ Convert Start Time & End Time into AM/PM format
                     const startTime = formatToAMPM(b.booking_time);
                     const endTime = calculateEndTime(b.booking_time, b.duration);
 
