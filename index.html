@@ -108,60 +108,54 @@
       <div class="booking-layout">
         <div class="booking-info">
           <div class="booking-step"><span>01</span><div><h3>Pick your experience</h3><p>Steering racing, PlayStation, or VR.</p></div></div>
-          <div class="booking-step"><span>02</span><div><h3>Tell us your plan</h3><p>Choose a preferred date, time and group size.</p></div></div>
-          <div class="booking-step"><span>03</span><div><h3>We’ll confirm with you</h3><p>Your request is not confirmed until the cafe contacts you.</p></div></div>
-          <div class="contact-note"><span>✦</span><p><strong>Have a question?</strong><br>Add your real phone number and location to this section before publishing.</p></div>
+          <div class="booking-step"><span>02</span><div><h3>Tell us your plan</h3><p>Choose preferred date, start/end time and players.</p></div></div>
+          <div class="booking-step"><span>03</span><div><h3>We’ll confirm with you</h3><p>Your request is checked for slot clashes automatically.</p></div></div>
+          <div class="contact-note"><span>✦</span><p><strong>Have a question?</strong><br>Contact Phoenix Game Cafe support anytime.</p></div>
         </div>
         <form class="booking-form" id="bookingForm">
           <div class="form-top"><span class="form-status"><i></i> BOOKING REQUEST</span><span class="form-index">PGC / 001</span></div>
           <div class="field-row">
-            <label>YOUR NAME<input name="name" type="text" placeholder="Player name" required autocomplete="name"></label>
-            <label>PHONE NUMBER<input name="phone" type="tel" placeholder="+91 98765 43210" required autocomplete="tel" pattern="[0-9+() -]{8,18}"></label>
+            <label>YOUR NAME<input name="name" type="text" placeholder="Player name" required autocomplete="name" id="name"></label>
+            <label>PHONE NUMBER<input name="phone" type="tel" placeholder="+91 98765 43210" required autocomplete="tel" pattern="[0-9+() -]{8,18}" id="phone"></label>
           </div>
           <label>CHOOSE YOUR GAME MODE
-            <select name="experience" id="experienceSelect" required>
+            <select name="experience" id="experience" required>
               <option value="" disabled selected>Select a game</option>
               <option>Steering Racing</option><option>PlayStation</option><option>VR</option>
             </select>
           </label>
-          <div class="field-row">
-            <label>PREFERRED DATE<input name="date" type="date" required id="dateInput"></label>
-            <label>PREFERRED TIME
-              <select name="time" required><option value="" disabled selected>Select time</option><option>Morning</option><option>Afternoon</option><option>Evening</option></select>
-            </label>
-          </div>
-          
-         <div class="form-group">
-    <label for="time">Select Start Time:</label>
-    <input type="time" id="time" name="time" required class="form-control">
-</div>
-          
-
-<div class="form-group">
-    <label for="duration">Session Duration:</label>
-    <select id="duration" name="duration" required class="form-control">
-        <option value="30 minutes">30 Minutes</option>
-        <option value="1 hour">1 Hour</option>
-        <option value="2 hours">2 Hours</option>
-    </select>
-</div>
           
           <div class="field-row">
+            <label>PREFERRED DATE<input name="date" type="date" required id="date"></label>
             <label>PLAYERS
-              <select name="players" required><option value="1">1 player</option><option value="2">2 players</option><option value="3">3 players</option><option value="4">4 players</option></select>
+              <select name="players" id="players" required><option value="1">1 player</option><option value="2">2 players</option><option value="3">3 players</option><option value="4">4 players</option></select>
             </label>
           </div>
-          <label>ANY SPECIAL REQUEST? <span class="optional">(OPTIONAL)</span><textarea name="notes" rows="3" placeholder="Birthday plan, group booking, questions..."></textarea></label>
+
+          <!-- START TIME & END TIME -->
+          <div class="field-row">
+            <label>START TIME<input type="time" id="startTime" name="time" required class="form-control"></label>
+            <label>END TIME<input type="time" id="endTime" name="endTime" required class="form-control"></label>
+          </div>
+
+          <!-- AUTO-CALCULATED DURATION -->
+          <div class="form-group" style="margin-bottom: 15px;">
+            <label for="duration">SESSION DURATION (Auto-Calculated):</label>
+            <input type="text" id="duration" name="duration" readonly required class="form-control" placeholder="Will calculate automatically...">
+          </div>
+
+          <label>ANY SPECIAL REQUEST? <span class="optional">(OPTIONAL)</span><textarea name="notes" id="notes" rows="3" placeholder="Birthday plan, group booking, questions..."></textarea></label>
           <label class="consent"><input type="checkbox" required><span>I agree that Phoenix Game Cafe may contact me about this booking request.</span></label>
           <button class="button button-primary submit-button" type="submit">SEND BOOKING REQUEST <span>↗</span></button>
         </form>
       </div>
     </section>
   </main>
+
 <!-- Contact & Address Section -->
 <section id="contact-section" style="background-color: #121212; color: #fff; padding: 40px 20px; text-align: center; border-top: 2px solid #ff4757; margin-top: 30px;">
     <h2 style="color: #ff4757; margin-bottom: 15px;">📍 Visit Phoenix Gaming Cafe</h2>
-    <p style="font-size: 16px; margin: 8px 0;"><strong>Address:</strong>Natrajan Lodge, Near Sugam Hospital Road, Valliyur, Tamil Nadu - 627117</p>
+    <p style="font-size: 16px; margin: 8px 0;"><strong>Address:</strong> Natrajan Lodge, Near Sugam Hospital Road, Valliyur, Tamil Nadu - 627117</p>
     <p style="font-size: 16px; margin: 8px 0;"><strong>Phone:</strong> +91 90033 66678</p>
     <p style="font-size: 16px; margin: 8px 0;"><strong>Email:</strong> phoenixcafegaming@gmail.com</p>
     <p style="font-size: 16px; margin: 8px 0;"><strong>Timing:</strong> Monday to Sunday: 10:00 AM – 10:00 PM</p>
