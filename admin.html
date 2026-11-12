@@ -250,7 +250,7 @@
                     const year = d.getFullYear();
                     const formattedDate = `${day}/${month}/${year}`;
 
-                    // ✅ Convert Start Time & End Time into AM/PM format
+                    // ✅ Explicitly format Start Time & End Time with AM/PM
                     const startTime = formatToAMPM(b.booking_time);
                     const endTime = calculateEndTime(b.booking_time, b.duration);
 
