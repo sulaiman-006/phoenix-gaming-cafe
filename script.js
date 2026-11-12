@@ -118,7 +118,7 @@ async function loadAllData() {
         endTimeInput.addEventListener('change', calculateDuration);
     }
 
-   // FORM SUBMISSION HANDLING
+  // FORM SUBMISSION HANDLING
     const bookingForm = document.getElementById('bookingForm');
     if (bookingForm) {
         bookingForm.addEventListener('submit', async function(e) {
@@ -129,10 +129,10 @@ async function loadAllData() {
                 phone: document.getElementById('phone').value,
                 experience: document.getElementById('experience').value,
                 date: document.getElementById('date').value,
-                startTime: document.getElementById('startTime').value, // Start Time
-                endTime: document.getElementById('endTime').value,     // End Time
+                startTime: document.getElementById('startTime').value, // Start Time ID
+                endTime: document.getElementById('endTime').value,         // End Time ID
                 players: document.getElementById('players').value,
-                duration: document.getElementById('duration').value,
+                duration: document.getElementById('duration').value,     // Duration Input
                 notes: document.getElementById('notes').value
             };
 
@@ -157,7 +157,6 @@ async function loadAllData() {
             }
         });
     }
-
     // Load data automatically when page opens
     loadAllData();
 
